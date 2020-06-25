@@ -2,7 +2,7 @@ import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators'
 import { TrackType } from '../types'
 import axios from 'axios'
 
-@Module({ name: 'tracks', namespaced: true })
+@Module({ namespaced: true })
 class Tracks extends VuexModule {
     public tracks: Array<TrackType> = []
 
@@ -11,9 +11,24 @@ class Tracks extends VuexModule {
       this.tracks = tracks
     }
 
-    @Action
-    public getTracks () {
-        axios.post('https://itunes.apple.com/search?term=jesse+baez&media=musicVideo')
+    @Action({ rawError: true, commit: 'setTracks' })
+    public async getTracks () {
+      const tracks: Array<TrackType> = []
+      const response = await axios.post('https://itunes.apple.com/search?term=jesse+baez&media=music')
+
+      response.data.results.forEach((element: any) => {
+        const picture = element.artworkUrl100.replace('100x100bb', '1000x1000bb')
+        const track: TrackType = {
+          artistName: element.artistName,
+          trackName: element.trackName,
+          url: element.trackViewUrl,
+          picture
+        }
+
+        tracks.push(track)
+      })
+
+      return tracks
     }
 }
 

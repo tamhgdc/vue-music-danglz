@@ -7,13 +7,23 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Player from './components/Player.vue'
+import { namespace } from 'vuex-class'
+
+const tracks = namespace('Tracks')
 
 @Component({
   components: {
     Player
   }
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  beforeMount () {
+    this.getTracks()
+  }
+
+  @tracks.Action
+  public getTracks!: () => void
+}
 </script>
 
 <style lang="stylus">
