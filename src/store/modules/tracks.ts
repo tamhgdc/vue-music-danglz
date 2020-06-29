@@ -8,6 +8,18 @@ class Tracks extends VuexModule {
     public currentTrack: TrackType | null = null
     public isFetching = false
 
+    get getTracks (): Array<TrackType> {
+      return this.tracks
+    }
+
+    get getCurrentTrack (): TrackType | null {
+      return this.currentTrack
+    }
+
+    get getTracksLength (): number {
+      return this.tracks.length
+    }
+
     @Mutation
     public setTracks (tracks: Array<TrackType>) {
       this.tracks = tracks
@@ -24,7 +36,7 @@ class Tracks extends VuexModule {
     }
 
     @Action({ commit: 'setTracks' })
-    public async getTracks () {
+    public async fetchTracks () {
       this.context.commit('setIsFetching', true)
 
       const tracks: Array<TrackType> = []
@@ -38,6 +50,9 @@ class Tracks extends VuexModule {
           artistName: element.artistName,
           trackName: element.trackName,
           url: element.trackViewUrl,
+          album: element.collectionName,
+          time: element.trackTimeMillis,
+          artist: element.artistName,
           picture
         }
 
@@ -48,7 +63,7 @@ class Tracks extends VuexModule {
     }
 
     @Action({ commit: 'setCurrentTrack' })
-    public selectTrack (trackId: number | string) {
+    public selectTrack (trackId: number | string | undefined) {
       const index: number = this.tracks.findIndex((track: TrackType) => track.id === trackId)
       return index !== -1 ? this.tracks[index] : null
     }

@@ -3,5 +3,8 @@ export interface TrackType {
     artistName: string,
     trackName: string,
     url: string,
-    picture: string
+    picture: string,
+    album: string,
+    time: number,
+    artist: string
 }
