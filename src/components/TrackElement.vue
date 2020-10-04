@@ -6,7 +6,7 @@
                 @mouseleave.native="hoverPlay = false"
                 @click.native="play()"
             >
-                <template v-if="getCurrentTrack && getCurrentTrack.id == id">
+                <template v-if="currentTrack && currentTrack.id == id">
                     <i class="fa fa-pause"></i>
                 </template>
                 <template v-else>
@@ -16,7 +16,8 @@
             </Button>
             <div class="title">
                 <div class="name">{{ name }}</div>
-                <div v-if="album" class="album">{{ artist }} | {{ album }}</div>
+                <div v-if="album && artist" class="album">{{ artist }} | {{ album }}</div>
+                <div v-else-if="artist" class="album">{{ artist }}</div>
             </div>
         </div>
         <div class="time">
@@ -50,7 +51,7 @@ export default class TrackElement extends Vue {
     private selectTrack!: (key: string | number | undefined) => void
 
     @tracks.Getter
-    private getCurrentTrack!: () => TrackType
+    private currentTrack!: () => TrackType
 
     private hoverPlay = false;
 
@@ -73,7 +74,7 @@ export default class TrackElement extends Vue {
 </script>
 <style lang="stylus" scoped>
 .track
-    padding 2rem 2.5rem
+    padding 1.3rem 2rem
     border-bottom 1px solid #e3e3Ee
     color #434343
     display flex
@@ -101,7 +102,7 @@ export default class TrackElement extends Vue {
                 transform translateX(2px)
 
         .title
-            margin-left 2rem
+            margin-left 1.3rem
             font-size .8rem
             .name
                 font-weight bold

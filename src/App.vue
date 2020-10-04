@@ -1,11 +1,13 @@
 <template>
   <div class="container">
-    <div class="tracks-view">
-      <div class="track-info" :style="{height: heightElement}">
-        <Cover />
-      </div>
-      <div class="track-list">
-        <TrackList />
+    <div class="wrapper">
+      <div class="tracks-view">
+        <div class="track-info" :style="{height: heightElement}">
+          <Cover />
+        </div>
+        <div class="track-list">
+          <TrackList />
+        </div>
       </div>
     </div>
     <Player/>
@@ -30,12 +32,18 @@ const tracks = namespace('Tracks')
   }
 })
 export default class App extends Vue {
+  beforeMount () {
+    const audio = new Audio('https://music.apple.com/us/album/tentaciones-feat-bcotb/1097195830?i=1097196024&uo=4')
+    audio.play()
+    // audio.play()
+  }
+
   @tracks.Getter
   private getTracksLength!: number
 
   private get heightElement (): string {
-    if (this.getTracksLength === 0) return 'auto'
-    return `${115 * this.getTracksLength}px`
+    if (this.getTracksLength < 6) return 'auto'
+    return `${95 * this.getTracksLength}px`
   }
 }
 </script>
@@ -54,12 +62,17 @@ body
     width 100%
     height 100vh
     background linear-gradient(linear-gradient)
+    overflow-y auto
+
+    .wrapper
+      max-width 1700px
+      margin 0 auto
 
     .tracks-view
       padding 3rem 6rem
       height calc(100vh - 6rem)
       display flex
-      overflow-y auto
+      // overflow-y auto
 
       .track-info
         width 30%

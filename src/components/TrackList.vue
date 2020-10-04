@@ -1,14 +1,14 @@
 <template>
   <div class="list" id="list-track">
       <TrackElement
-        v-for="(track, i) in getTracks"
+        v-for="(track, i) in trackList"
         :key="track.id"
         :name="track.trackName"
         :album="track.album"
         :time="track.time"
         :artist="track.artist"
         :isFirst="i == 0"
-        :isLast="i == getTracks.length - 1"
+        :isLast="i == trackList.length - 1"
       />
   </div>
 </template>
@@ -36,7 +36,7 @@ export default class TrackList extends Vue {
   private fetchTracks!: () => void
 
   @tracks.Getter
-  private getTracks!: () => Array<TrackType>
+  private trackList!: () => Array<TrackType>
 }
 </script>
 
