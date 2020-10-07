@@ -1,6 +1,6 @@
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators'
 import { TrackType, PicturePayloadType, TracksType } from '../types'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 @Module({ namespaced: true })
 class Tracks extends VuexModule {
@@ -58,7 +58,7 @@ class Tracks extends VuexModule {
       this.context.commit('setIsFetching', true)
 
       const tracks: TracksType = {}
-      const response = await axios.post('https://itunes.apple.com/search?term=jesse+baez&media=music')
+      const response = await axios.post('https://itunes.apple.com/search?term=kevin+kaarl&media=music')
 
       this.context.commit('setIsFetching', false)
       response.data.results.forEach((element: any) => {
@@ -69,7 +69,7 @@ class Tracks extends VuexModule {
           id: element.trackId,
           artistName: element.artistName,
           trackName: element.trackName,
-          url: element.trackViewUrl,
+          url: element.previewUrl,
           album: element.collectionName,
           time: element.trackTimeMillis,
           artist: element.artistName,
@@ -92,15 +92,19 @@ class Tracks extends VuexModule {
     @Action({ commit: 'setPictureBlob' })
     public async fetchPictureBlob (trackId: number) {
       if (!(trackId in this.tracks)) return null
-      const picture = await fetch(this.tracks[trackId].picture).then((response: any) => response.blob())
-      return { picture, trackId }
+
+      const picture = await axios.get(this.tracks[trackId].picture, { responseType: 'blob' })
+        .then((response: AxiosResponse) => response.data)
+      return { picture: picture, trackId }
     }
 
     @Action({ commit: 'setMinPictureBlob' })
     public async fetchMinPictureBlob (trackId: number) {
       if (!(trackId in this.tracks)) return null
-      const picture = await fetch(this.tracks[trackId].minPicture).then((response: any) => response.blob())
-      return { picture, trackId }
+
+      const picture = await axios.get(this.tracks[trackId].minPicture, { responseType: 'blob' })
+        .then((response: AxiosResponse) => response.data)
+      return { picture: picture, trackId }
     }
 }
 

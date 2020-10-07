@@ -19,7 +19,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import { Component, Vue } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
@@ -35,17 +35,17 @@ const tracks = namespace('Tracks')
   }
 })
 export default class Cover extends Vue {
-    private lastTrackId = 0
-    private isLoading = true
+    lastTrackId = 0
+    isLoading = true
 
     @tracks.Getter
-    private currentTrack!: TrackType | null
+    currentTrack
 
     @tracks.Action
-    private fetchPictureBlob!: (id: number) => void
+    fetchPictureBlob
 
     @tracks.Action
-    private fetchMinPictureBlob!: (id: number) => void
+    fetchMinPictureBlob
 
     get coverUrl () {
       if (!this.currentTrack) return null
@@ -59,7 +59,7 @@ export default class Cover extends Vue {
       return null
     }
 
-    private buildStyleObject (pictureBlob: Blob, withBlur = false) {
+    buildStyleObject (pictureBlob, withBlur = false) {
       return {
         backgroundImage: `url(${URL.createObjectURL(pictureBlob)})`,
         backgroundRepeat: 'no-repeat',

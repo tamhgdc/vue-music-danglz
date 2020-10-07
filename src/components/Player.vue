@@ -19,14 +19,48 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { namespace } from 'vuex-class'
+import { TrackType } from '@/store/types'
+
+const tracks = namespace('Tracks')
 
 @Component({})
 export default class Player extends Vue {
     private progressSong = 0.0
 
+    @tracks.Getter
+    private currentTrack!: TrackType | null
+
     get calcProgressBackground () {
       return `${100.0 - this.progressSong}%`
+    }
+
+    @Watch('currentTrack.url')
+    onCurrentTrankChange () {
+      if (!this.currentTrack) return
+
+      const sound = new Audio(this.currentTrack.url)
+      sound.play()
+
+      sound.onprogress = (event: Event) => {
+        console.log(event)
+      }
+
+      sound.ontimeupdate = () => {
+        // console.log(sound.currentTime)
+      }
+      // this not work!!!
+      // https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/821
+
+    //   if ('mediaSession' in navigator && (navigator as NavigatorMediaSession).mediaSession) {
+    //     (navigator as NavigatorMediaSession).mediaSession.metadata = new MediaMetadata({
+    //       title: this.currentTrack.trackName,
+    //       artist: this.currentTrack.artistName,
+    //       album: this.currentTrack.album,
+    //       artwork: [{ src: this.currentTrack.picture }]
+    //     })
+    //   }
     }
 }
 </script>
