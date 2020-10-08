@@ -1,13 +1,14 @@
 <template>
-    <button>
+    <button :class="{hovered: isHovered}">
         <slot></slot>
     </button>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component({})
 export default class Button extends Vue {
+    @Prop(Boolean) readonly isHovered?: boolean
 }
 </script>
 <style lang="stylus" scoped>
@@ -20,7 +21,7 @@ export default class Button extends Vue {
         cursor pointer
         transition 100ms ease-in-out
 
-        &:hover
+        &:hover, &.hovered
             background-color buttonface
 
         &:active

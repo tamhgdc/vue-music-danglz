@@ -24,3 +24,11 @@ export interface TracksType {
 export interface PictureCacheType {
     [url: string]: Blob;
 }
+
+export enum StatusType {
+    WAITING,
+    PLAYING,
+    PAUSED,
+    NEXT,
+    PREVIOUS,
+}

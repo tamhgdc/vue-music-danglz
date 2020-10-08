@@ -4,14 +4,15 @@
             <Button
                 @mouseover.native="hoverPlay = true"
                 @mouseleave.native="hoverPlay = false"
-                @click.native="play()"
+                @click.native="trackControl()"
+                :isHovered="currentTrack && currentTrack.id === id"
             >
-                <template v-if="currentTrack && currentTrack.id == id">
+                <template v-if="pauseValidator">
                     <i class="fa fa-pause"></i>
                 </template>
                 <template v-else>
-                    <i v-if="!hoverPlay" class="fa fa-music"></i>
-                    <i v-if="hoverPlay" class="fa fa-play"></i>
+                    <i v-if="playValidator" class="fa fa-play"></i>
+                    <i v-else class="fa fa-music"></i>
                 </template>
             </Button>
             <div class="title">
@@ -30,7 +31,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
 import Button from '@/components/ui/Button.vue'
-import { TrackType } from '@/store/types'
+import { StatusType, TrackType } from '@/store/types'
 
 const tracks = namespace('Tracks')
 
@@ -50,10 +51,24 @@ export default class TrackElement extends Vue {
     @tracks.Action
     private selectTrack!: (key: string | number | undefined) => void
 
-    @tracks.Getter
-    private currentTrack!: () => TrackType
+    @tracks.Action
+    private changeStatus!: (status: StatusType) => void
 
-    private hoverPlay = false;
+    @tracks.Getter
+    private currentTrack!: TrackType | null
+
+    @tracks.Getter
+    private currentStatus!: StatusType
+
+    private hoverPlay = false
+
+    get pauseValidator () {
+      return this.currentTrack && this.currentTrack.id === this.id && this.currentStatus === StatusType.PLAYING
+    }
+
+    get playValidator () {
+      return this.hoverPlay || (this.currentTrack && this.currentTrack.id === this.id && this.currentStatus === StatusType.PAUSED)
+    }
 
     get prettyTime () {
       if (!this.time) return ''
@@ -67,8 +82,19 @@ export default class TrackElement extends Vue {
       return this.$vnode.key
     }
 
-    private play () {
-      this.selectTrack(this.id)
+    private trackControl () {
+      if (this.currentTrack && this.currentTrack.id === this.id) {
+        // toggle player
+        this.changeStatus(
+          this.currentStatus === StatusType.PLAYING
+            ? StatusType.PAUSED
+            : StatusType.PLAYING
+        )
+      } else {
+        // set track
+        this.changeStatus(StatusType.PAUSED)
+        setTimeout(() => this.selectTrack(this.id))
+      }
     }
 }
 </script>

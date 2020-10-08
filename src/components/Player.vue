@@ -21,16 +21,29 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
-import { TrackType } from '@/store/types'
+import { TrackType, StatusType } from '@/store/types'
 
 const tracks = namespace('Tracks')
 
 @Component({})
 export default class Player extends Vue {
     private progressSong = 0.0
+    private sound: HTMLAudioElement | null = null
 
     @tracks.Getter
     private currentTrack!: TrackType | null
+
+    @tracks.Getter
+    private currentStatus!: StatusType
+
+    @tracks.Getter
+    private nextTrackId!: number
+
+    @tracks.Action
+    private changeStatus!: (status: StatusType) => void
+
+    @tracks.Action
+    private selectTrack!: (id: number) => void
 
     get calcProgressBackground () {
       return `${100.0 - this.progressSong}%`
@@ -38,16 +51,26 @@ export default class Player extends Vue {
 
     @Watch('currentTrack.url')
     onCurrentTrankChange () {
-      if (!this.currentTrack) return
+      if (this.currentTrack === null) return
 
-      const sound = new Audio(this.currentTrack.url)
-      sound.play()
+      this.sound = new Audio(this.currentTrack.url)
 
-      sound.onprogress = (event: Event) => {
-        console.log(event)
+      this.sound.oncanplaythrough = () => {
+        this.changeStatus(StatusType.PLAYING)
       }
 
-      sound.ontimeupdate = () => {
+      this.sound.onended = () => {
+        this.changeStatus(StatusType.PAUSED)
+        this.changeStatus(StatusType.WAITING)
+        console.log(this.nextTrackId)
+        setTimeout(() => this.selectTrack(this.nextTrackId))
+      }
+
+      this.sound.onprogress = (event: Event) => {
+        // console.log(event)
+      }
+
+      this.sound.ontimeupdate = () => {
         // console.log(sound.currentTime)
       }
       // this not work!!!
@@ -61,6 +84,21 @@ export default class Player extends Vue {
     //       artwork: [{ src: this.currentTrack.picture }]
     //     })
     //   }
+    }
+
+    @Watch('currentStatus')
+    onStatusChange (status: StatusType) {
+      if (this.sound === null) return
+
+      switch (status) {
+        case StatusType.PAUSED:
+          this.sound.pause()
+          break
+
+        case StatusType.PLAYING:
+          this.sound.play()
+          break
+      }
     }
 }
 </script>

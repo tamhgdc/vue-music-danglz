@@ -1,5 +1,5 @@
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators'
-import { TrackType, PicturePayloadType, TracksType } from '../types'
+import { TrackType, PicturePayloadType, TracksType, StatusType } from '../types'
 import axios, { AxiosResponse } from 'axios'
 
 @Module({ namespaced: true })
@@ -7,6 +7,7 @@ class Tracks extends VuexModule {
     public tracks: TracksType = {}
     public currentTrackId = 0
     public isFetching = false
+    public status = StatusType.WAITING
 
     get trackList (): Array<TrackType> {
       return Object.values(this.tracks).sort((track: TrackType) => track.id)
@@ -17,8 +18,23 @@ class Tracks extends VuexModule {
       return null
     }
 
+    get nextTrackId (): number {
+      if (!this.trackList.length) return 0
+
+      const currentId = this.currentTrack ? this.currentTrack.id : 0
+      const index = currentId !== 0 ? this.trackList.findIndex((track: TrackType) => track.id === currentId) : 0
+
+      if (index === this.trackList.length - 1) return this.trackList[0].id
+
+      return this.trackList[this.trackList.findIndex((track: TrackType) => track.id === currentId) + 1].id
+    }
+
     get getTracksLength (): number {
       return Object.keys(this.tracks).length
+    }
+
+    get currentStatus (): StatusType {
+      return this.status
     }
 
     @Mutation
@@ -27,9 +43,13 @@ class Tracks extends VuexModule {
     }
 
     @Mutation
+    public setStatus (status: StatusType) {
+      this.status = status
+    }
+
+    @Mutation
     public setCurrentTrackId (trackId: number | null) {
-      if (trackId == null) return
-      this.currentTrackId = trackId
+      this.currentTrackId = trackId || 0
     }
 
     @Mutation
@@ -105,6 +125,11 @@ class Tracks extends VuexModule {
       const picture = await axios.get(this.tracks[trackId].minPicture, { responseType: 'blob' })
         .then((response: AxiosResponse) => response.data)
       return { picture: picture, trackId }
+    }
+
+    @Action({ commit: 'setStatus' })
+    public changeStatus (status: StatusType) {
+      return status
     }
 }
 
