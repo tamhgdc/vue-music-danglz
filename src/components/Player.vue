@@ -72,7 +72,6 @@ export default class Player extends Vue {
       this.sound.onended = () => {
         this.changeStatus(StatusType.PAUSED)
         this.changeStatus(StatusType.INACTIVE)
-        console.log(this.nextTrackId)
         setTimeout(() => this.selectTrack(this.nextTrackId))
       }
 

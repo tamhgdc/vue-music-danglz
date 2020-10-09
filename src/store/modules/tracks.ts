@@ -18,6 +18,10 @@ class Tracks extends VuexModule {
       return null
     }
 
+    get isFetchingTracks (): boolean {
+      return this.isFetching
+    }
+
     get nextTrackId (): number {
       if (!this.trackList.length) return 0
 
@@ -78,7 +82,6 @@ class Tracks extends VuexModule {
       this.context.commit('setIsFetching', true)
 
       const tracks: TracksType = {}
-      search = 'david bowie'
       const response = await axios.post(`https://itunes.apple.com/search?term=${search}&media=music`)
 
       this.context.commit('setIsFetching', false)

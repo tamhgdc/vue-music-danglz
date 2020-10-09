@@ -1,6 +1,6 @@
 <template>
     <button :class="{hovered: isHovered}">
-        <Loader v-if="isLoading" color="gray" size="52px" extraClass="loader" />
+        <Loader v-if="isLoading" color="#ad86e2" size="52px" extraClass="loader" />
         <slot></slot>
     </button>
 </template>

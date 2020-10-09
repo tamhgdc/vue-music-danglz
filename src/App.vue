@@ -6,7 +6,12 @@
           <Cover />
         </div>
         <div class="track-list">
-          <div>busqueda!</div>
+          <Input
+            placeholder="Type your search and press enter"
+            :isLoading="isFetchingTracks"
+            :onKeyPress="onKeyPress"
+            v-model="searchWord"
+          />
           <TrackList />
         </div>
       </div>
@@ -22,6 +27,9 @@ import { namespace } from 'vuex-class'
 import Player from '@/components/Player.vue'
 import TrackList from '@/components/TrackList.vue'
 import Cover from '@/components/Cover.vue'
+import Input from '@/components/ui/Input.vue'
+
+import { StatusType } from '@/store/types'
 
 const tracks = namespace('Tracks')
 
@@ -29,16 +37,40 @@ const tracks = namespace('Tracks')
   components: {
     Player,
     TrackList,
-    Cover
+    Cover,
+    Input
   }
 })
 export default class App extends Vue {
+  private searchWord = ''
+
   @tracks.Getter
   private getTracksLength!: number
+
+  @tracks.Getter
+  private isFetchingTracks!: boolean
+
+  @tracks.Action
+  private fetchTracks!: (search: string) => void
+
+  @tracks.Action
+  private changeStatus!: (status: StatusType) => void
+
+  @tracks.Action
+  private selectTrack!: (id: number) => void
 
   private get heightElement (): string {
     if (this.getTracksLength < 6) return 'auto'
     return `${95 * this.getTracksLength}px`
+  }
+
+  private onKeyPress (event: KeyboardEvent) {
+    if (event.key === 'Enter' && !!this.searchWord) {
+      // this.changeStatus(StatusType.PAUSED)
+      // this.changeStatus(StatusType.INACTIVE)
+      this.fetchTracks(this.searchWord)
+      // setTimeout(() => this.selectTrack(0))
+    }
   }
 }
 </script>
