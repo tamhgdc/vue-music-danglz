@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" :class="{ 'is-playing': showPlayer }">
       <div class="content">
         <input
             type="range"
@@ -47,6 +47,10 @@ export default class Player extends Vue {
 
     get calcProgressBackground () {
       return `${100.0 - this.progressSong}%`
+    }
+
+    get showPlayer () {
+      return this.currentStatus !== StatusType.INACTIVE
     }
 
     @Watch('currentTrack.url')
@@ -117,8 +121,13 @@ export default class Player extends Vue {
     position fixed
     bottom 0
     width 100%
-    height 5rem
+    height 5.2rem
     background-color white
+    transform translateY(100%)
+    transition 200ms ease-in-out
+
+    &.is-playing
+      transform translateY(0)
 
     .content
         position relative

@@ -17,6 +17,10 @@
       </div>
     </div>
     <Player/>
+
+    <a class="github" href="https://github.com/danlgz/vue-music-player" target="_blank">
+      <i class="fab fa-github"></i>
+    </a>
   </div>
 </template>
 
@@ -84,6 +88,18 @@ body
   margin 0
   padding 0
   font-family 'Montserrat', sans-serif
+
+  .github
+    position fixed
+    bottom 1rem
+    right 2.2rem
+    font-size 2.2rem
+    color #3c3c3c
+    opacity 0.7
+    transition 200ms ease-in-out
+    &:hover
+      opacity 1
+      transform scale(1.1)
 
   .container
     width 100%
