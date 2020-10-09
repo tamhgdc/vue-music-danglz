@@ -80,7 +80,7 @@ export default class Cover extends Vue {
 
     .name
         text-align: center;
-        font-weight: bold;
+        font-weight: 900;
         text-transform: uppercase;
         color: white;
         padding: 2rem 0 1rem 0;

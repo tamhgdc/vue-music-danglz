@@ -6,6 +6,7 @@
           <Cover />
         </div>
         <div class="track-list">
+          <div>busqueda!</div>
           <TrackList />
         </div>
       </div>
@@ -32,12 +33,6 @@ const tracks = namespace('Tracks')
   }
 })
 export default class App extends Vue {
-  beforeMount () {
-    const audio = new Audio('https://music.apple.com/us/album/tentaciones-feat-bcotb/1097195830?i=1097196024&uo=4')
-    audio.play()
-    // audio.play()
-  }
-
   @tracks.Getter
   private getTracksLength!: number
 
@@ -51,7 +46,7 @@ export default class App extends Vue {
 <style lang="stylus">
 
 @import './styles/variables.styl'
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
 
 body
   margin 0

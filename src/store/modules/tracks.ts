@@ -7,7 +7,7 @@ class Tracks extends VuexModule {
     public tracks: TracksType = {}
     public currentTrackId = 0
     public isFetching = false
-    public status = StatusType.WAITING
+    public status = StatusType.INACTIVE
 
     get trackList (): Array<TrackType> {
       return Object.values(this.tracks).sort((track: TrackType) => track.id)
@@ -74,11 +74,12 @@ class Tracks extends VuexModule {
     }
 
     @Action({ commit: 'setTracks' })
-    public async fetchTracks () {
+    public async fetchTracks (search: string) {
       this.context.commit('setIsFetching', true)
 
       const tracks: TracksType = {}
-      const response = await axios.post('https://itunes.apple.com/search?term=kevin+kaarl&media=music')
+      search = 'david bowie'
+      const response = await axios.post(`https://itunes.apple.com/search?term=${search}&media=music`)
 
       this.context.commit('setIsFetching', false)
       response.data.results.forEach((element: any) => {

@@ -6,6 +6,7 @@
                 @mouseleave.native="hoverPlay = false"
                 @click.native="trackControl()"
                 :isHovered="currentTrack && currentTrack.id === id"
+                :isLoading="buttonIsLoading"
             >
                 <template v-if="pauseValidator">
                     <i class="fa fa-pause"></i>
@@ -62,12 +63,19 @@ export default class TrackElement extends Vue {
 
     private hoverPlay = false
 
+    get buttonIsLoading () {
+      return this.currentTrack && this.currentTrack.id === this.id && this.currentStatus === StatusType.WAITING
+    }
+
     get pauseValidator () {
-      return this.currentTrack && this.currentTrack.id === this.id && this.currentStatus === StatusType.PLAYING
+      return this.currentTrack && this.currentTrack.id === this.id && (
+        this.currentStatus === StatusType.PLAYING || this.currentStatus === StatusType.WAITING)
     }
 
     get playValidator () {
-      return this.hoverPlay || (this.currentTrack && this.currentTrack.id === this.id && this.currentStatus === StatusType.PAUSED)
+      return this.hoverPlay || (
+        this.currentTrack && this.currentTrack.id === this.id && this.currentStatus === StatusType.PAUSED
+      )
     }
 
     get prettyTime () {
@@ -131,7 +139,7 @@ export default class TrackElement extends Vue {
             margin-left 1.3rem
             font-size .8rem
             .name
-                font-weight bold
+                font-weight 900
             .album
                 margin-top 5px
 </style>

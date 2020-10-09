@@ -53,25 +53,33 @@ export default class Player extends Vue {
     onCurrentTrankChange () {
       if (this.currentTrack === null) return
 
+      this.progressSong = 0
+
       this.sound = new Audio(this.currentTrack.url)
 
       this.sound.oncanplaythrough = () => {
         this.changeStatus(StatusType.PLAYING)
       }
 
+      this.sound.onloadstart = () => {
+        this.changeStatus(StatusType.WAITING)
+      }
+
+      this.sound.onwaiting = () => {
+        this.changeStatus(StatusType.WAITING)
+      }
+
       this.sound.onended = () => {
         this.changeStatus(StatusType.PAUSED)
-        this.changeStatus(StatusType.WAITING)
+        this.changeStatus(StatusType.INACTIVE)
         console.log(this.nextTrackId)
         setTimeout(() => this.selectTrack(this.nextTrackId))
       }
 
-      this.sound.onprogress = (event: Event) => {
-        // console.log(event)
-      }
-
       this.sound.ontimeupdate = () => {
-        // console.log(sound.currentTime)
+        if (!this.sound) return
+
+        this.progressSong = (this.sound.currentTime / this.sound.duration) * 100
       }
       // this not work!!!
       // https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/821

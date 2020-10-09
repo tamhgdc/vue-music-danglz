@@ -1,14 +1,22 @@
 <template>
     <button :class="{hovered: isHovered}">
+        <Loader v-if="isLoading" color="gray" size="52px" extraClass="loader" />
         <slot></slot>
     </button>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
-@Component({})
+import Loader from '@/components/ui/Loader.vue'
+
+@Component({
+  components: {
+    Loader
+  }
+})
 export default class Button extends Vue {
     @Prop(Boolean) readonly isHovered?: boolean
+    @Prop(Boolean) readonly isLoading?: boolean
 }
 </script>
 <style lang="stylus" scoped>
@@ -20,6 +28,12 @@ export default class Button extends Vue {
         background-color transparent
         cursor pointer
         transition 100ms ease-in-out
+        position relative
+
+        .loader
+            position: absolute
+            top: 0
+            left: 0
 
         &:hover, &.hovered
             background-color buttonface

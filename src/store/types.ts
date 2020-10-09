@@ -26,6 +26,7 @@ export interface PictureCacheType {
 }
 
 export enum StatusType {
+    INACTIVE,
     WAITING,
     PLAYING,
     PAUSED,
