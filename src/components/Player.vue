@@ -1,7 +1,8 @@
 <template>
   <div class="player" :class="{ 'is-playing': showPlayer }">
     <div class="content">
-      <input
+      <div class="progress-container">
+        <input
           type="range"
           min="0"
           max="100"
@@ -9,12 +10,13 @@
           class="time-line"
           v-model="progressSong"
           @change="updateTrackTimeline"
-      >
-      <div class="progress"></div>
-      <div
-          class="background"
-          :style="{ width: calcProgressBackground }"
-      ></div>
+        >
+        <div class="progress"></div>
+        <div
+            class="background"
+            :style="{ width: calcProgressBackground }"
+        ></div>
+      </div>
       <div class="body">
         <div class="info">
           <div class="cover" :style="coverStyles">
@@ -258,42 +260,56 @@ export default class Player extends Vue {
             top 0
             right 0
             z-index 2
-            height 7px
             background-color #d3d3d3
 
         .progress
             position absolute
             top 0
             width 100%
-            height 7px
             z-index 1
             background linear-gradient(linear-gradient-progress)
 
         .time-line
-            position absolute
+          position absolute
+          top 0
+          z-index 3
+          width 100%
+          appearance none
+          background transparent
+          outline none
+          padding 0
+          margin 0
+
+          &::-webkit-slider-thumb
+              appearance none
+              width 15px
+              height 15px
+              border-radius 50%
+              background white
+              box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+              border .5px solid #e0e0e0
+              cursor pointer
+              transform scale(0)
+              transition 100ms ease-in-out
+              opacity 0
+
+        .progress-container
+          position absolute
+          width 100%
+          height 7px
+          top 0
+          transition 200ms ease-in-out
+
+          .background, .progress, .time-line
             top 0
-            z-index 3
-            width 100%
-            height 7px
-            appearance none
-            background transparent
-            outline none
-            padding 0
-            margin 0
+            height 3px
 
-            &::-webkit-slider-thumb
-                appearance none
-                width 15px
-                height 15px
-                border-radius 50%
-                background white
-                box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
-                border .5px solid #e0e0e0
-                cursor pointer
-                transform scale(0)
-                transition 100ms ease-in-out
-
-            &:hover
-                &::-webkit-slider-thumb
-                    transform scale(1)
+          &:hover
+            // .background, .progress, .time-line
+            // top -1px
+            transform scaleY(1.4)
+            .time-line
+              &::-webkit-slider-thumb
+                transform scaleX(1.1) scaleY(.8)
+                opacity 1
 </style>
