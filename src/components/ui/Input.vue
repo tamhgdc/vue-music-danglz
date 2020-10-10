@@ -8,7 +8,7 @@
     />
     <i v-else class="fa fa-search"></i>
     <input
-      type="text"
+      type="search"
       :placeholder="placeholder"
       @focus="focused = true"
       @blur="focused = false"

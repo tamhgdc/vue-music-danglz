@@ -10,6 +10,8 @@ export interface TrackType {
     album: string;
     time: number;
     artist: string;
+    liveFullTime: number;
+    liveCurrentTime: number;
 }
 
 export interface PicturePayloadType {

@@ -1,20 +1,40 @@
 <template>
   <div class="player" :class="{ 'is-playing': showPlayer }">
-      <div class="content">
-        <input
-            type="range"
-            min="0"
-            max="100"
-            step="0.1"
-            class="time-line"
-            v-model="progressSong"
-        >
-        <div class="progress"></div>
-        <div
-            class="background"
-            :style="{ width: calcProgressBackground }"
-        ></div>
+    <div class="content">
+      <input
+          type="range"
+          min="0"
+          max="100"
+          step="0.1"
+          class="time-line"
+          v-model="progressSong"
+          @change="updateTrackTimeline"
+      >
+      <div class="progress"></div>
+      <div
+          class="background"
+          :style="{ width: calcProgressBackground }"
+      ></div>
+      <div class="body">
+        <div class="info">
+          <div class="cover" :style="coverStyles">
+            <i v-if="!coverStyles" class="fa fa-music"></i>
+          </div>
+          <div class="properties">
+            <div class="name" :title="currentTrack ? currentTrack.trackName : ''">
+              {{ currentTrack ? currentTrack.trackName : '' }}
+            </div>
+            <div class="time">
+              {{ currentPrettyTime }} / {{ fullPrettyTime }}
+            </div>
+          </div>
+        </div>
+        <div class="controls">
+          <!-- controls -->
+        </div>
+        <div></div>
       </div>
+    </div>
   </div>
 </template>
 
@@ -22,6 +42,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import { TrackType, StatusType } from '@/store/types'
+import throttle from 'lodash/throttle'
 
 const tracks = namespace('Tracks')
 
@@ -29,6 +50,9 @@ const tracks = namespace('Tracks')
 export default class Player extends Vue {
     private progressSong = 0.0
     private sound: HTMLAudioElement | null = null
+    private currentPrettyTime = ''
+    private fullPrettyTime = ''
+    private coverStyles: any | null = null
 
     @tracks.Getter
     private currentTrack!: TrackType | null
@@ -45,12 +69,33 @@ export default class Player extends Vue {
     @tracks.Action
     private selectTrack!: (id: number) => void
 
+    @tracks.Action
+    private updateLiveFullTime!: (time: number) => void
+
+    @tracks.Action
+    private updateLiveCurrentTime!: (time: number) => void
+
     get calcProgressBackground () {
       return `${100.0 - this.progressSong}%`
     }
 
     get showPlayer () {
       return this.currentStatus !== StatusType.INACTIVE
+    }
+
+    private updateTrackTimeline () {
+      if (!this.sound) return
+      // this.changeStatus(StatusType.PAUSED)
+      this.updateLiveCurrentTime(this.sound.duration * (this.progressSong / 100))
+      // this.changeStatus(StatusType.PLAYING)
+    }
+
+    private prettyTime (time: number) {
+      if (!time) return '00:00'
+
+      const minutes: number = Math.floor(time / 60)
+      const seconds: string = ((time % 60)).toFixed(0)
+      return `${minutes < 10 ? '0' : ''}${minutes}:${parseInt(seconds) < 10 ? '0' : ''}${seconds}`
     }
 
     @Watch('currentTrack.url')
@@ -63,6 +108,8 @@ export default class Player extends Vue {
 
       this.sound.oncanplaythrough = () => {
         this.changeStatus(StatusType.PLAYING)
+        if (!this.sound) return
+        this.updateLiveFullTime(this.sound.duration)
       }
 
       this.sound.onloadstart = () => {
@@ -75,15 +122,13 @@ export default class Player extends Vue {
 
       this.sound.onended = () => {
         this.changeStatus(StatusType.PAUSED)
-        this.changeStatus(StatusType.INACTIVE)
         setTimeout(() => this.selectTrack(this.nextTrackId))
       }
 
-      this.sound.ontimeupdate = () => {
+      this.sound.ontimeupdate = throttle(() => {
         if (!this.sound) return
-
-        this.progressSong = (this.sound.currentTime / this.sound.duration) * 100
-      }
+        this.updateLiveCurrentTime(this.sound.currentTime)
+      }, 250)
       // this not work!!!
       // https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/821
 
@@ -95,6 +140,28 @@ export default class Player extends Vue {
     //       artwork: [{ src: this.currentTrack.picture }]
     //     })
     //   }
+    }
+
+    @Watch('currentTrack.liveCurrentTime')
+    onLiveCurrentTimeChange (time: number) {
+      if (!this.sound) return
+
+      this.progressSong = (time / this.sound.duration) * 100
+      this.currentPrettyTime = this.prettyTime(time)
+    }
+
+    @Watch('currentTrack.minPictureBlob')
+    onPictureChange (image: Blob | null) {
+      this.coverStyles = image ? {
+        backgroundImage: `url(${URL.createObjectURL(image)})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '100%'
+      } : null
+    }
+
+    @Watch('currentTrack.liveFullTime')
+    onLiveFullTimeChange (time: number) {
+      this.fullPrettyTime = this.prettyTime(time)
     }
 
     @Watch('currentStatus')
@@ -109,6 +176,10 @@ export default class Player extends Vue {
         case StatusType.PLAYING:
           this.sound.play()
           break
+
+        case StatusType.INACTIVE:
+          this.selectTrack(0)
+          break
       }
     }
 }
@@ -121,7 +192,7 @@ export default class Player extends Vue {
     position fixed
     bottom 0
     width 100%
-    height 5.2rem
+    height 6.5rem
     background-color white
     transform translateY(100%)
     transition 200ms ease-in-out
@@ -131,6 +202,56 @@ export default class Player extends Vue {
 
     .content
         position relative
+        height 100%
+
+        .body
+          width 100%
+          height 100%
+          display flex
+          justify-content space-between
+          align-items center
+          padding 1.5rem
+          box-sizing border-box
+
+          .info
+            display flex
+            align-items center
+
+            .cover
+              width 3.5rem
+              height 3.5rem
+              background white
+              border-radius 8px
+              text-align center
+              display flex
+              align-items center
+              justify-content center
+              box-shadow 0px 0px 5px 0px #b7b7b7
+
+              i
+                color #434343
+
+            .properties
+              display flex
+              flex-direction column
+              color #434343
+              margin-left 15px
+
+              .name
+                font-weight 900
+                text-transform uppercase
+                font-size 1rem
+                white-space nowrap
+                overflow hidden
+                text-overflow ellipsis
+                max-width 300px
+
+              .time
+                font-weight normal
+                font-family sans-serif
+                font-size .8rem
+                margin-top 3px
+                color gray
 
         .background
             position absolute
@@ -175,5 +296,4 @@ export default class Player extends Vue {
             &:hover
                 &::-webkit-slider-thumb
                     transform scale(1)
-
 </style>

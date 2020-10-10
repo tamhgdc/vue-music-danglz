@@ -70,10 +70,9 @@ export default class App extends Vue {
 
   private onKeyPress (event: KeyboardEvent) {
     if (event.key === 'Enter' && !!this.searchWord) {
-      // this.changeStatus(StatusType.PAUSED)
-      // this.changeStatus(StatusType.INACTIVE)
+      this.changeStatus(StatusType.PAUSED)
       this.fetchTracks(this.searchWord)
-      // setTimeout(() => this.selectTrack(0))
+      setTimeout(() => this.changeStatus(StatusType.INACTIVE))
     }
   }
 }
@@ -91,7 +90,7 @@ body
 
   .github
     position fixed
-    bottom 1rem
+    bottom 1.5rem
     right 2.2rem
     font-size 2.2rem
     color #3c3c3c

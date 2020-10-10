@@ -30,7 +30,7 @@ class Tracks extends VuexModule {
 
       if (index === this.trackList.length - 1) return this.trackList[0].id
 
-      return this.trackList[this.trackList.findIndex((track: TrackType) => track.id === currentId) + 1].id
+      return this.trackList[index + 1].id
     }
 
     get getTracksLength (): number {
@@ -47,12 +47,34 @@ class Tracks extends VuexModule {
     }
 
     @Mutation
+    public setLiveFullTime (time: number) {
+      if (!(this.currentTrackId in this.tracks)) return
+      this.tracks[this.currentTrackId].liveFullTime = time
+    }
+
+    @Mutation
+    public setLiveCurrentTime (time: number) {
+      if (!(this.currentTrackId in this.tracks)) return
+      this.tracks[this.currentTrackId].liveCurrentTime = time
+
+      // const track = this.tracks[this.currentTrackId]
+      // track.liveCurrentTime = time
+      // this.tracks[this.currentTrackId] = { ...track }
+    }
+
+    @Mutation
     public setStatus (status: StatusType) {
       this.status = status
     }
 
     @Mutation
     public setCurrentTrackId (trackId: number | null) {
+      // reset previus track
+      if (this.currentTrackId in this.tracks) {
+        this.tracks[this.currentTrackId].liveCurrentTime = 0
+        this.tracks[this.currentTrackId].liveFullTime = 0
+      }
+      // set new track
       this.currentTrackId = trackId || 0
     }
 
@@ -87,7 +109,7 @@ class Tracks extends VuexModule {
       this.context.commit('setIsFetching', false)
       response.data.results.forEach((element: any) => {
         const picture = element.artworkUrl100.replace('100x100bb', '1200x1200bb')
-        const minPicture = element.artworkUrl100.replace('100x100bb', '30x30bb')
+        const minPicture = element.artworkUrl100.replace('100x100bb', '55x55bb')
 
         const track: TrackType = {
           id: element.trackId,
@@ -98,7 +120,9 @@ class Tracks extends VuexModule {
           time: element.trackTimeMillis,
           artist: element.artistName,
           picture,
-          minPicture
+          minPicture,
+          liveCurrentTime: 0,
+          liveFullTime: 0
         }
 
         tracks[track.id] = track
@@ -134,6 +158,16 @@ class Tracks extends VuexModule {
     @Action({ commit: 'setStatus' })
     public changeStatus (status: StatusType) {
       return status
+    }
+
+    @Action({ commit: 'setLiveCurrentTime' })
+    public updateLiveCurrentTime (time: number) {
+      return time
+    }
+
+    @Action({ commit: 'setLiveFullTime' })
+    public updateLiveFullTime (time: number) {
+      return time
     }
 }
 

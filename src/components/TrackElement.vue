@@ -1,10 +1,13 @@
 <template>
-    <div class="track" :class="{first: isFirst, last: isLast}">
+    <div
+      class="track"
+      :class="{first: isFirst, last: isLast}"
+      @click="trackControl()"
+    >
         <div class="identity">
             <Button
                 @mouseover.native="hoverPlay = true"
                 @mouseleave.native="hoverPlay = false"
-                @click.native="trackControl()"
                 :isHovered="currentTrack && currentTrack.id === id"
                 :isLoading="buttonIsLoading"
             >
@@ -21,9 +24,6 @@
                 <div v-if="album && artist" class="album">{{ artist }} | {{ album }}</div>
                 <div v-else-if="artist" class="album">{{ artist }}</div>
             </div>
-        </div>
-        <div class="time">
-            {{ prettyTime }}
         </div>
     </div>
 </template>
@@ -55,6 +55,9 @@ export default class TrackElement extends Vue {
     @tracks.Action
     private changeStatus!: (status: StatusType) => void
 
+    @tracks.Action
+    private updateLiveCurrentTime!: (time: number) => void
+
     @tracks.Getter
     private currentTrack!: TrackType | null
 
@@ -78,14 +81,6 @@ export default class TrackElement extends Vue {
       )
     }
 
-    get prettyTime () {
-      if (!this.time) return ''
-
-      const minutes: number = Math.floor(this.time / 60000)
-      const seconds: string = ((this.time % 60000) / 1000).toFixed(0)
-      return `${minutes}:${parseInt(seconds) < 10 ? '0' : ''}${seconds}`
-    }
-
     get id (): number | string | undefined {
       return this.$vnode.key
     }
@@ -101,6 +96,7 @@ export default class TrackElement extends Vue {
       } else {
         // set track
         this.changeStatus(StatusType.PAUSED)
+        this.updateLiveCurrentTime(0)
         setTimeout(() => this.selectTrack(this.id))
       }
     }
@@ -116,6 +112,7 @@ export default class TrackElement extends Vue {
     align-items center
     text-transform uppercase
     transition 100ms ease-in-out
+    cursor pointer
 
     &.first
         border-radius 10px 10px 0 0
