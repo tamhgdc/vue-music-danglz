@@ -40,4 +40,7 @@ export default class Button extends Vue {
 
         &:active
             background-color #e8e8e8
+    // @media only screen and (max-width: 48em)
+    //     button
+    //         padding 0.5rem
 </style>

@@ -113,6 +113,7 @@ export default class TrackElement extends Vue {
     text-transform uppercase
     transition 100ms ease-in-out
     cursor pointer
+    text-align left
 
     &.first
         border-radius 10px 10px 0 0
@@ -139,4 +140,13 @@ export default class TrackElement extends Vue {
                 font-weight 900
             .album
                 margin-top 5px
+
+@media only screen and (max-width: 48em)
+  .track
+    padding 1rem 1.2rem
+    .identity
+      font-size 1rem !important
+      .title
+        font-size .75rem !important
+        margin-left 1rem !important
 </style>

@@ -1,11 +1,11 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <div class="tracks-view">
-        <div class="track-info" :style="{height: heightElement}">
+      <div class="tracks-view row center-xs">
+        <div class="track-info col-md-4 col-xs-10 col-sm-6 col-lg-3" :style="{height: heightElement}">
           <Cover />
         </div>
-        <div class="track-list">
+        <div class="track-list col-md-8 col-xs-12 col-sm-10 col-lg-7">
           <Input
             placeholder="Type your search and press enter"
             :isLoading="isFetchingTracks"
@@ -81,7 +81,12 @@ export default class App extends Vue {
 <style lang="stylus">
 
 @import './styles/variables.styl'
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+@import './styles/flexbox-grid.css'
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap')
+
+.row
+  margin-left 0
+  margin-right 0
 
 body
   margin 0
@@ -90,7 +95,7 @@ body
 
   .github
     position fixed
-    bottom 1.5rem
+    bottom 1.7rem
     right 2.2rem
     font-size 2.2rem
     color #3c3c3c
@@ -117,11 +122,15 @@ body
       // overflow-y auto
 
       .track-info
-        width 30%
+        // width 30%
         position relative
         // height parent
 
-      .track-list
-        width 70%
+      // .track-list
+      //   width 70%
+
+@media only screen and (max-width: 64em)
+  .tracks-view
+    padding 1.5rem 0.5rem !important
 
 </style>

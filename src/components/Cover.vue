@@ -75,8 +75,10 @@ export default class Cover extends Vue {
 .cover
     position: sticky
     top 5rem
-    left 0
+    // left 0
     width 80%
+    margin 0 auto
+    margin-bottom 5rem
 
     .name
         text-align: center;
@@ -136,4 +138,10 @@ export default class Cover extends Vue {
             i
                 font-size 2.5rem
                 color white
+
+@media only screen and (max-width: 64em)
+    .cover
+        position initial
+    .track-info
+        height auto !important
 </style>

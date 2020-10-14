@@ -8,7 +8,7 @@
           max="100"
           step="0.1"
           class="time-line"
-          v-model="progressSong"
+          v-model.lazy="progressSong"
           @change="updateTrackTimeline"
         >
         <div class="progress"></div>
@@ -19,7 +19,7 @@
       </div>
       <div class="body">
         <div class="info">
-          <div class="cover" :style="coverStyles">
+          <div class="cover-mini" :style="coverStyles">
             <i v-if="!coverStyles" class="fa fa-music"></i>
           </div>
           <div class="properties">
@@ -44,7 +44,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import { TrackType, StatusType } from '@/store/types'
-import throttle from 'lodash/throttle'
+import { debounce, throttle } from 'lodash'
 
 const tracks = namespace('Tracks')
 
@@ -55,6 +55,7 @@ export default class Player extends Vue {
     private currentPrettyTime = ''
     private fullPrettyTime = ''
     private coverStyles: any | null = null
+    private canSetProgressSongValue = true
 
     @tracks.Getter
     private currentTrack!: TrackType | null
@@ -85,11 +86,17 @@ export default class Player extends Vue {
       return this.currentStatus !== StatusType.INACTIVE
     }
 
-    private updateTrackTimeline () {
+    private updateTrackTimeline (e: any) {
       if (!this.sound) return
-      // this.changeStatus(StatusType.PAUSED)
-      this.updateLiveCurrentTime(this.sound.duration * (this.progressSong / 100))
-      // this.changeStatus(StatusType.PLAYING)
+      this.changeStatus(StatusType.PAUSED)
+      this.canSetProgressSongValue = false
+      setTimeout(() => {
+        if (!this.sound) return
+        console.log('set time!!!')
+        this.sound.currentTime = (this.sound.duration * this.progressSong) / 100
+        this.changeStatus(StatusType.PLAYING)
+        this.canSetProgressSongValue = true
+      }, 1000)
     }
 
     private prettyTime (time: number) {
@@ -109,8 +116,9 @@ export default class Player extends Vue {
       this.sound = new Audio(this.currentTrack.url)
 
       this.sound.oncanplaythrough = () => {
+        if (!this.sound || this.currentStatus === StatusType.PAUSED) return
+        console.log('can play!!!', this.currentStatus)
         this.changeStatus(StatusType.PLAYING)
-        if (!this.sound) return
         this.updateLiveFullTime(this.sound.duration)
       }
 
@@ -123,8 +131,9 @@ export default class Player extends Vue {
       }
 
       this.sound.onended = () => {
+        this.updateLiveCurrentTime(0)
         this.changeStatus(StatusType.PAUSED)
-        setTimeout(() => this.selectTrack(this.nextTrackId))
+        this.selectTrack(this.nextTrackId)
       }
 
       this.sound.ontimeupdate = throttle(() => {
@@ -146,7 +155,7 @@ export default class Player extends Vue {
 
     @Watch('currentTrack.liveCurrentTime')
     onLiveCurrentTimeChange (time: number) {
-      if (!this.sound) return
+      if (!this.sound || !this.canSetProgressSongValue) return
 
       this.progressSong = (time / this.sound.duration) * 100
       this.currentPrettyTime = this.prettyTime(time)
@@ -219,7 +228,7 @@ export default class Player extends Vue {
             display flex
             align-items center
 
-            .cover
+            .cover-mini
               width 3.5rem
               height 3.5rem
               background white

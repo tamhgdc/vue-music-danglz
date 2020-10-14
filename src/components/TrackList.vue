@@ -46,13 +46,13 @@ export default class TrackList extends Vue {
   margin-bottom 7rem
 
 .placeholder
-  width 100%
+  width 40%
   display flex
   flex-direction column
   justify-content center
   align-items center
-  padding 8rem 5rem
-  box-sizing border-box
+  margin 0 auto
+  margin-top 5rem
 
   p
     color white
@@ -61,7 +61,7 @@ export default class TrackList extends Vue {
     opacity 0.5
 
   svg
-    width 250px
+    width 100%
     height auto
     opacity 0.3
 

@@ -2,7 +2,7 @@
   <div class="input-wrapper" :class="{ 'input-focused': focused }">
     <Loader
       v-if="isLoading"
-      size="16px" extraClass="loader"
+      size="17px" extraClass="loader"
       :color="colorLoadingIcon"
       :strong="true"
     />
@@ -80,4 +80,21 @@ export default class Input extends Vue {
 
     &::placeholder
       color #C0C0C0
+
+    &::-webkit-search-cancel-button
+      -webkit-appearance none
+      // position relative
+      // right 0
+      // height 20px
+      // width 20px
+      // border-radius 10px
+      // color red
+      // background red
+// @media only screen and (max-width: 48em)
+//   .input-wrapper
+//     input
+//       font-size .8rem
+    // i
+    //   margin-right 10px
+    //   font-size .8rem
 </style>
