@@ -131,6 +131,6 @@ body
 
 @media only screen and (max-width: 64em)
   .tracks-view
-    padding 1.5rem 0.5rem !important
+    padding 1.5rem 0rem !important
 
 </style>

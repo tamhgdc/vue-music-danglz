@@ -76,6 +76,7 @@ export default class Input extends Vue {
     color #434343
     text-transform uppercase
     outline none
+    font-size 1em
     // font-size 1rem
 
     &::placeholder
@@ -90,11 +91,9 @@ export default class Input extends Vue {
       // border-radius 10px
       // color red
       // background red
-// @media only screen and (max-width: 48em)
-//   .input-wrapper
-//     input
-//       font-size .8rem
-    // i
-    //   margin-right 10px
-    //   font-size .8rem
+@media only screen and (max-width: 48em)
+  .input-wrapper
+    padding 5px 20px
+    i
+      margin-right 10px
 </style>
