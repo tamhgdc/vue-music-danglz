@@ -321,4 +321,7 @@ export default class Player extends Vue {
               &::-webkit-slider-thumb
                 transform scaleX(1.1) scaleY(.8)
                 opacity 1
+@media only screen and (max-width: 48em)
+  .name
+    max-width 200px !important
 </style>

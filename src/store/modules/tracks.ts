@@ -104,7 +104,7 @@ class Tracks extends VuexModule {
       this.context.commit('setIsFetching', true)
 
       const tracks: TracksType = {}
-      const response = await axios.post(`https://itunes.apple.com/search?term=${search}&media=music`)
+      const response = await axios.get(`https://itunes.apple.com/search?term=${search}&media=music`)
 
       this.context.commit('setIsFetching', false)
       response.data.results.forEach((element: any) => {

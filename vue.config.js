@@ -1,3 +1,5 @@
 module.exports = {
-  publicPath: '/vue-music-player/'
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/vue-music-player/'
+    : '/'
 }
