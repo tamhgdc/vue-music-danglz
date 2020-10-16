@@ -1,6 +1,5 @@
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators'
 import { TrackType, PicturePayloadType, TracksType, StatusType } from '../types'
-import axios, { AxiosResponse } from 'axios'
 
 @Module({ namespaced: true })
 class Tracks extends VuexModule {
@@ -104,10 +103,10 @@ class Tracks extends VuexModule {
       this.context.commit('setIsFetching', true)
 
       const tracks: TracksType = {}
-      const response = await axios.get(`https://itunes.apple.com/search?term=${search}&media=music`)
+      const response = await fetch(`https://itunes.apple.com/search?term=${search}&media=music`).then((res: Response) => res.json())
 
       this.context.commit('setIsFetching', false)
-      response.data.results.forEach((element: any) => {
+      response.results.forEach((element: any) => {
         const picture = element.artworkUrl100.replace('100x100bb', '1200x1200bb')
         const minPicture = element.artworkUrl100.replace('100x100bb', '55x55bb')
 
@@ -141,8 +140,8 @@ class Tracks extends VuexModule {
     public async fetchPictureBlob (trackId: number) {
       if (!(trackId in this.tracks)) return null
 
-      const picture = await axios.get(this.tracks[trackId].picture, { responseType: 'blob' })
-        .then((response: AxiosResponse) => response.data)
+      const picture = await fetch(this.tracks[trackId].picture)
+        .then((response: Response) => response.blob())
       return { picture: picture, trackId }
     }
 
@@ -150,8 +149,8 @@ class Tracks extends VuexModule {
     public async fetchMinPictureBlob (trackId: number) {
       if (!(trackId in this.tracks)) return null
 
-      const picture = await axios.get(this.tracks[trackId].minPicture, { responseType: 'blob' })
-        .then((response: AxiosResponse) => response.data)
+      const picture = await fetch(this.tracks[trackId].minPicture)
+        .then((response: Response) => response.blob())
       return { picture: picture, trackId }
     }
 

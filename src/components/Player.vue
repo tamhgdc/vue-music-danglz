@@ -117,7 +117,6 @@ export default class Player extends Vue {
 
       this.sound.oncanplaythrough = () => {
         if (!this.sound || this.currentStatus === StatusType.PAUSED) return
-        console.log('can play!!!', this.currentStatus)
         this.changeStatus(StatusType.PLAYING)
         this.updateLiveFullTime(this.sound.duration)
       }

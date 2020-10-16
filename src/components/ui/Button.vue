@@ -22,7 +22,7 @@ export default class Button extends Vue {
 <style lang="stylus" scoped>
     button
         border-radius 50%
-        padding 1rem
+        padding 15px
         border none
         outline none
         background-color transparent
