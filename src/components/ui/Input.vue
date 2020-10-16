@@ -94,6 +94,6 @@ export default class Input extends Vue {
 @media only screen and (max-width: 48em)
   .input-wrapper
     padding 5px 20px
-    i
-      margin-right 10px
+    i, .loader
+      margin-right 10px !important
 </style>
