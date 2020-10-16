@@ -1,6 +1,6 @@
 <template>
     <button :class="{hovered: isHovered}">
-        <Loader v-if="isLoading" color="#ad86e2" size="52px" extraClass="loader" />
+        <Loader v-if="isLoading" color="#ad86e2" size="55px" extraClass="loader" />
         <slot></slot>
     </button>
 </template>
@@ -33,7 +33,7 @@ export default class Button extends Vue {
         .loader
             position: absolute
             top: 0
-            left: 0
+            left: -2px
 
         &:hover, &.hovered
             background-color buttonface
