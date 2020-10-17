@@ -9,7 +9,7 @@
                 @mouseover.native="hoverPlay = true"
                 @mouseleave.native="hoverPlay = false"
                 :isHovered="currentTrack && currentTrack.id === id"
-                :isLoading="true"
+                :isLoading="buttonIsLoading"
             >
                 <template v-if="pauseValidator">
                     <i class="fa fa-pause"></i>
