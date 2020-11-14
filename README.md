@@ -1,12 +1,12 @@
 # Vue Music Plarer
 
-[Live Demo](https://danlgz.github.io/vue-music-player/)
-
 ![alt text](./img/demo.png "Demo")
+
+[Live Demo](https://danlgz.github.io/vue-music-player/)
 
 ***
 
-## Project setup
+### Project setup
 ```
 yarn install
 ```
