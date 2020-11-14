@@ -1,4 +1,10 @@
-# vue-music-player
+# Vue Music Plarer
+
+[Live Demo](https://danlgz.github.io/vue-music-player/)
+
+![alt text](./img/demo.png "Demo")
+
+***
 
 ## Project setup
 ```
@@ -9,16 +15,3 @@ yarn install
 ```
 yarn serve
 ```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

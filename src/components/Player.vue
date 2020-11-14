@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="controls">
-          <!-- controls -->
+          controls
         </div>
         <div></div>
       </div>
