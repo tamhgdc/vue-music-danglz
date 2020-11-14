@@ -1,4 +1,4 @@
-# Vue Music Plarer
+# Vue Music Player
 
 ![alt text](./img/demo.png "Demo")
 
